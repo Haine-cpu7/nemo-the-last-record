@@ -357,9 +357,11 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 /* ===== v0.3.2 scene image support ===== */
 .visual.has-image{
   position:relative;
-  background-size:cover;
-  background-position:center center;
+  min-height:360px;
+  background-size:88% auto;
+  background-position:60% center;
   background-repeat:no-repeat;
+  background-color:#0c1117;
   justify-content:flex-end;
   align-items:flex-start;
   padding:18px;
