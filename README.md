@@ -88,3 +88,34 @@ v0.2では設定の根幹を改稿し、PROJECT N.E.M.O.を
 - OGP用画像 `ogp.png` を追加（1200x630）
 - Open Graph / Twitter Card メタタグを追加
 - URL共有時にプレビュー画像が出るよう調整
+
+
+## v0.2.4 Title / OGP / Favicon Update
+- タイトル画面の背景オーバーレイを強化し、文字の可読性を向上
+- タイトル周辺に text-shadow を追加して読みやすく調整
+- 文字入り専用OGP画像 `ogp.png` に差し替え
+- `favicon.png` / `favicon.ico` を追加
+- HTML に favicon 用の link タグを追加
+
+
+## v0.3 CINEMATIC RECORD EDITION
+
+文章量を増やさず、「間・光・ノイズ・音・暗転」で物語を読ませる演出版。
+
+### 追加演出
+- REC切り替え時の復元率演出
+- 重要台詞のクリック不能な短い「間」
+- MANY WORLDS / PROJECT N.E.M.O. / BRANCH EVENT の世界線エフェクト
+- PROJECT N.E.M.O.起動時の白フラッシュと微振動
+- WORLD-0000 : SIGNAL LOST の暗転と音の消失
+- 現代編で音と光を柔らかく切り替え
+- 最終選択肢を端末認証風に変更
+- クリア後タイトル画面の雰囲気を微変化
+- クリア後タイトル画面で10秒待つと WORLD-0137 の隠しログ
+- 2周目以降に SKIP 機能解放
+- SOUND ON/OFF 切り替え
+- 外部音源なし。WebAudioで低いドローン、機械音、微かなノイズを生成
+
+### セーブ
+v0.3はv0.2系と別のlocalStorageキーを使用。
+過去版のセーブには干渉しません。

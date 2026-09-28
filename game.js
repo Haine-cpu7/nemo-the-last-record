@@ -1,8 +1,8 @@
 
 const $ = (q)=>document.querySelector(q);
 
-const SAVE_KEY = "nemo_last_record_v02_save";
-const CLEAR_KEY = "nemo_last_record_v02_clear";
+const SAVE_KEY = "nemo_last_record_v03_save";
+const CLEAR_KEY = "nemo_last_record_v03_clear";
 
 const state = {
   scene: 0,
@@ -10,6 +10,313 @@ const state = {
   cleared: false,
   ending: null
 };
+
+const cinema = {
+  skip: false,
+  sound: true,
+  titleTimer: null,
+  audioReady: false,
+  audio: null,
+  fxMode: "idle",
+  lastRec: null,
+  holdUntil: 0,
+  sceneToken: 0
+};
+
+const IMPORTANT_HOLDS = {
+  17: 950,   // そこへ、わが子を送れるのか。
+  26: 900,   // 定義する必要があるのか。
+  28: 1100,  // どの子も、私の娘の続きだ。
+  37: 900,   // 滅びた世界を背負わせる...
+  38: 1200,  // それぞれに、自分自身の続きを...
+  40: 700,   // 守れ。
+  41: 700,   // 導くな。
+  42: 850,   // 王女として扱うな。
+  43: 1400,  // ただ、その子が...
+  48: 800,   // 転送 start
+  49: 450,   // world IDs
+  50: 650,   // identity warning
+  51: 1900,  // SIGNAL LOST
+  56: 900    // それぞれがNEMO
+};
+
+const RECOVERY_RECORDS = new Set([
+  "RECORD 001","RECORD 014","RECORD 028","RECORD 031",
+  "RECORD 047","RECORD 052","RECORD 053"
+]);
+
+function delay(ms){
+  return new Promise(resolve=>setTimeout(resolve, cinema.skip ? Math.min(ms,90) : ms));
+}
+
+function initAudio(){
+  if(cinema.audioReady) return;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if(!Ctx) return;
+  const ctx = new Ctx();
+  const master = ctx.createGain();
+  master.gain.value = cinema.sound ? 0.11 : 0;
+  master.connect(ctx.destination);
+
+  const drone = ctx.createOscillator();
+  const droneGain = ctx.createGain();
+  drone.type = "sine";
+  drone.frequency.value = 47;
+  droneGain.gain.value = 0.12;
+  drone.connect(droneGain).connect(master);
+  drone.start();
+
+  const hum = ctx.createOscillator();
+  const humGain = ctx.createGain();
+  hum.type = "triangle";
+  hum.frequency.value = 94.3;
+  humGain.gain.value = 0.025;
+  hum.connect(humGain).connect(master);
+  hum.start();
+
+  const bufferSize = 2 * ctx.sampleRate;
+  const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++) output[i] = Math.random()*2-1;
+  const noise = ctx.createBufferSource();
+  const noiseFilter = ctx.createBiquadFilter();
+  const noiseGain = ctx.createGain();
+  noise.buffer = noiseBuffer;
+  noise.loop = true;
+  noiseFilter.type = "lowpass";
+  noiseFilter.frequency.value = 500;
+  noiseGain.gain.value = 0.012;
+  noise.connect(noiseFilter).connect(noiseGain).connect(master);
+  noise.start();
+
+  cinema.audio = {ctx,master,drone,droneGain,hum,humGain,noise,noiseGain};
+  cinema.audioReady = true;
+}
+
+function setSound(on){
+  cinema.sound = on;
+  $("#soundBtn").textContent = `SOUND: ${on ? "ON":"OFF"}`;
+  if(cinema.audioReady){
+    const {ctx,master} = cinema.audio;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.linearRampToValueAtTime(on ? 0.11 : 0, ctx.currentTime + .16);
+  }
+}
+
+function audioPulse(kind="soft"){
+  if(!cinema.sound) return;
+  initAudio();
+  if(!cinema.audioReady) return;
+  const {ctx,master} = cinema.audio;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = kind==="alert" ? "square" : "sine";
+  osc.frequency.setValueAtTime(kind==="alert" ? 210 : 520, ctx.currentTime);
+  if(kind==="branch") osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime+.18);
+  gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(kind==="alert" ? .05 : .025, ctx.currentTime+.015);
+  gain.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime+(kind==="branch"?.24:.12));
+  osc.connect(gain).connect(master);
+  osc.start();
+  osc.stop(ctx.currentTime+.3);
+}
+
+function audioMood(mode){
+  if(!cinema.audioReady) return;
+  const {ctx,droneGain,humGain,noiseGain} = cinema.audio;
+  let d=.12,h=.025,n=.012;
+  if(mode==="branch"){d=.17;h=.045;n=.020}
+  if(mode==="lost"){d=.001;h=.001;n=.001}
+  if(mode==="soft"){d=.055;h=.012;n=.004}
+  for(const [node,val] of [[droneGain,d],[humGain,h],[noiseGain,n]]){
+    node.gain.cancelScheduledValues(ctx.currentTime);
+    node.gain.linearRampToValueAtTime(val,ctx.currentTime+.45);
+  }
+}
+
+function setFxMode(mode){
+  cinema.fxMode = mode;
+}
+
+function resizeFx(){
+  const c = $("#fxCanvas");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  c.width = Math.floor(innerWidth*dpr);
+  c.height = Math.floor(innerHeight*dpr);
+  c.style.width = innerWidth+"px";
+  c.style.height = innerHeight+"px";
+  const ctx = c.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize",resizeFx);
+
+const fxNodes = Array.from({length:32},()=>({
+  a:Math.random()*Math.PI*2,
+  r:60+Math.random()*420,
+  s:.0008+Math.random()*.0019,
+  p:Math.random()*Math.PI*2
+}));
+
+function drawFx(t){
+  const c=$("#fxCanvas");
+  if(!c){requestAnimationFrame(drawFx);return}
+  const ctx=c.getContext("2d");
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+
+  if(cinema.fxMode!=="idle"){
+    const cx=innerWidth/2, cy=innerHeight*.55;
+    const branch = cinema.fxMode==="branch";
+    const title = cinema.fxMode==="title";
+    const alpha = branch ? .22 : title ? .09 : .06;
+    ctx.lineWidth=.8;
+
+    const count = branch ? 24 : title ? 13 : 8;
+    for(let i=0;i<count;i++){
+      const n=fxNodes[i];
+      n.p += n.s*16;
+      const angle=n.a+Math.sin(n.p)*.18;
+      const len=(branch?Math.max(innerWidth,innerHeight)*.72:Math.max(innerWidth,innerHeight)*.48)*(0.65+(i%5)*.07);
+      const x2=cx+Math.cos(angle)*len;
+      const y2=cy+Math.sin(angle)*len*.55;
+      const grad=ctx.createLinearGradient(cx,cy,x2,y2);
+      grad.addColorStop(0,`rgba(210,232,255,${alpha*1.8})`);
+      grad.addColorStop(1,"rgba(90,160,230,0)");
+      ctx.strokeStyle=grad;
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      const mx=(cx+x2)/2 + Math.sin(n.p+i)*50;
+      const my=(cy+y2)/2 + Math.cos(n.p*1.3+i)*28;
+      ctx.quadraticCurveTo(mx,my,x2,y2);
+      ctx.stroke();
+
+      if(branch && i<14){
+        ctx.fillStyle=`rgba(220,240,255,${.18+.12*Math.sin(n.p)})`;
+        ctx.beginPath();
+        ctx.arc(x2,y2,1.3,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }
+  requestAnimationFrame(drawFx);
+}
+
+async function blackout(ms=900){
+  const el=$("#blackout");
+  el.classList.add("active");
+  await delay(ms);
+}
+async function revealFromBlackout(ms=700){
+  const el=$("#blackout");
+  el.classList.remove("active");
+  await delay(ms);
+}
+async function whiteFlash(){
+  const el=$("#blackout");
+  el.classList.remove("active");
+  el.classList.add("flash");
+  await delay(80);
+  el.classList.remove("flash");
+}
+
+async function recoverySequence(rec,title){
+  if(cinema.skip) return;
+  const overlay=$("#recoveryOverlay");
+  $("#recoveryRec").textContent=rec;
+  $("#recoveryTitle").textContent=title || "RECOVERING";
+  $("#recoveryFill").style.width="0%";
+  $("#recoveryPercent").textContent="0%";
+  overlay.classList.remove("hidden");
+  audioPulse("soft");
+
+  const points=[12,31,57,81,100];
+  for(const p of points){
+    $("#recoveryFill").style.width=p+"%";
+    $("#recoveryPercent").textContent=p+"%";
+    if(p===57) audioPulse("soft");
+    await delay(p===100?180:120);
+  }
+  await delay(220);
+  overlay.classList.add("hidden");
+}
+
+function sceneClasses(s){
+  $("#visual").classList.remove("branching","signal-lost");
+  $("#sceneTitle").classList.remove("impact");
+  $("#text").classList.remove("impact-line","system-log","soft-world");
+  $("#choices").classList.remove("final-choice");
+
+  if(s.title==="MANY WORLDS" || s.title==="PROJECT N.E.M.O." || s.title==="BRANCH EVENT"){
+    $("#visual").classList.add("branching");
+    setFxMode("branch");
+    audioMood("branch");
+  }else if(s.title==="WORLD-0001" || s.title==="WORLD MAP"){
+    setFxMode("soft");
+    audioMood("soft");
+    $("#text").classList.add("soft-world");
+  }else{
+    setFxMode("record");
+    audioMood("record");
+  }
+
+  if(s.visual.includes("SIGNAL LOST")){
+    $("#visual").classList.add("signal-lost");
+  }
+
+  if(s.speaker==="SYSTEM" || s.visual.includes("WORLD") || s.visual.includes("TRANSFER") || s.visual.includes("BRANCH")){
+    $("#text").classList.add("system-log");
+  }
+
+  if(IMPORTANT_HOLDS[state.scene]){
+    $("#text").classList.add("impact-line");
+    $("#sceneTitle").classList.add("impact");
+  }
+
+  if(s.choices) $("#choices").classList.add("final-choice");
+}
+
+async function preSceneCinematic(prevScene,newScene){
+  const s=scenes[newScene];
+  if(!s) return;
+
+  if(RECOVERY_RECORDS.has(s.rec) && cinema.lastRec!==s.rec){
+    await recoverySequence(s.rec,s.title);
+  }
+
+  if(s.rec==="RECORD 053" && s.visual.includes("BRANCH SEQUENCE START")){
+    await whiteFlash();
+    $("#gameScreen").classList.add("cinematic-shake");
+    setTimeout(()=>$("#gameScreen").classList.remove("cinematic-shake"),500);
+    audioPulse("branch");
+  }
+
+  if(s.visual.includes("WORLD BRANCH MAP")){
+    audioPulse("branch");
+  }
+
+  if(s.visual.includes("ORIGIN SIGNAL LOST")){
+    audioMood("lost");
+    await blackout(1150);
+    await delay(550);
+    await revealFromBlackout(1100);
+  }
+
+  cinema.lastRec=s.rec;
+}
+
+function scheduleTitleSecret(){
+  clearTimeout(cinema.titleTimer);
+  $("#hiddenSignal").classList.add("hidden");
+  if(localStorage.getItem(CLEAR_KEY)==="1"){
+    cinema.titleTimer=setTimeout(()=>{
+      if($("#titleScreen").classList.contains("active")){
+        $("#hiddenSignal").classList.remove("hidden");
+        audioPulse("soft");
+        setTimeout(()=>$("#hiddenSignal").classList.add("hidden"),5200);
+      }
+    },10000);
+  }
+}
+
 
 const archives = [
   {id:"REC-000", title:"UNKNOWN FILE", body:"NEMO / RECORD 000。原世界から残された最後の基礎記録。", unlockAt:0},
@@ -190,10 +497,14 @@ function syncUnlocks(){
   if(state.cleared && !state.unlocked.includes("REC-∞")) state.unlocked.push("REC-∞");
 }
 
-function renderScene(){
+async function renderScene(){
   syncUnlocks();
   const s = scenes[state.scene];
   if(!s){ return; }
+
+  const token=++cinema.sceneToken;
+  await preSceneCinematic(state.scene-1,state.scene);
+  if(token!==cinema.sceneToken) return;
 
   $("#chapterLabel").textContent = s.rec;
   $("#recordStatus").textContent = s.rec;
@@ -202,13 +513,16 @@ function renderScene(){
   $("#visualText").textContent = s.visual;
   $("#speaker").textContent = s.speaker || "";
   $("#choices").innerHTML = "";
-  $("#nextBtn").classList.remove("hidden");
+  $("#nextBtn").classList.remove("hidden","waiting");
+
+  sceneClasses(s);
 
   clearInterval(typingTimer);
   fullText = s.text;
   shownText = "";
   $("#text").textContent = "";
 
+  const typeDelay = cinema.skip ? 2 : (s.speaker==="SYSTEM" ? 9 : 15);
   let i = 0;
   typingTimer = setInterval(()=>{
     shownText += fullText[i] ?? "";
@@ -216,9 +530,19 @@ function renderScene(){
     i++;
     if(i >= fullText.length){
       clearInterval(typingTimer);
+      const hold = IMPORTANT_HOLDS[state.scene] || 0;
+      cinema.holdUntil = Date.now() + (cinema.skip ? 0 : hold);
+      if(hold && !cinema.skip){
+        $("#nextBtn").classList.add("waiting");
+        setTimeout(()=>{
+          if(state.scene===scenes.indexOf(s)){
+            $("#nextBtn").classList.remove("waiting");
+          }
+        },hold);
+      }
       showChoicesIfNeeded(s);
     }
-  }, 15);
+  }, typeDelay);
 
   saveAuto();
 }
@@ -227,32 +551,51 @@ function showChoicesIfNeeded(s){
   if(!s.choices) return;
   $("#nextBtn").classList.add("hidden");
   $("#choices").innerHTML = "";
-  s.choices.forEach(c=>{
-    const b = document.createElement("button");
-    b.className = "choice";
-    b.textContent = c.label;
-    b.onclick = ()=>finish(c.ending);
-    $("#choices").appendChild(b);
-  });
+  const renderChoices=()=>{
+    s.choices.forEach(c=>{
+      const b = document.createElement("button");
+      b.className = "choice";
+      b.textContent = c.label;
+      b.onclick = ()=>{
+        audioPulse("soft");
+        finish(c.ending);
+      };
+      $("#choices").appendChild(b);
+    });
+  };
+  const wait=Math.max(0,cinema.holdUntil-Date.now());
+  if(wait>0 && !cinema.skip) setTimeout(renderChoices,wait);
+  else renderChoices();
 }
 
 function advance(){
   const s = scenes[state.scene];
+  if(Date.now() < cinema.holdUntil && !cinema.skip) return;
+
   if(shownText.length < fullText.length){
     clearInterval(typingTimer);
     shownText = fullText;
     $("#text").textContent = fullText;
+    const hold = IMPORTANT_HOLDS[state.scene] || 0;
+    cinema.holdUntil = Date.now() + (cinema.skip ? 0 : hold);
+    if(hold && !cinema.skip){
+      $("#nextBtn").classList.add("waiting");
+      setTimeout(()=>$("#nextBtn").classList.remove("waiting"),hold);
+    }
     showChoicesIfNeeded(s);
     return;
   }
+
   if(s.choices) return;
   if(state.scene < scenes.length-1){
+    audioPulse("soft");
     state.scene++;
     renderScene();
   }
 }
 
-function finish(type){
+async function finish(type){
+  await blackout(420);
   state.cleared = true;
   state.ending = type;
   syncUnlocks();
@@ -329,13 +672,23 @@ STATUS : HEALTHY`;
   $("#topbar").classList.add("hidden");
   $("#footerHint").classList.add("hidden");
   setScreen("#endingScreen");
+  setFxMode("soft");
+  audioMood("soft");
+  await revealFromBlackout(850);
 }
 
 function startNew(){
+  initAudio();
+  if(cinema.audioReady && cinema.audio.ctx.state==="suspended") cinema.audio.ctx.resume();
+  clearTimeout(cinema.titleTimer);
+  $("#hiddenSignal").classList.add("hidden");
   state.scene = 0;
   state.unlocked = [];
   state.ending = null;
   state.cleared = localStorage.getItem(CLEAR_KEY)==="1";
+  cinema.skip = false;
+  $("#skipBtn").textContent="SKIP: OFF";
+  $("#skipBtn").classList.toggle("hidden", !state.cleared);
   $("#topbar").classList.remove("hidden");
   $("#footerHint").classList.remove("hidden");
   setScreen("#gameScreen");
@@ -344,7 +697,7 @@ function startNew(){
 
 function saveAuto(){
   const data = {
-    version:"0.2",
+    version:"0.3",
     scene:state.scene,
     unlocked:state.unlocked,
     cleared:state.cleared,
@@ -355,6 +708,10 @@ function saveAuto(){
 }
 
 function loadGame(){
+  initAudio();
+  if(cinema.audioReady && cinema.audio.ctx.state==="suspended") cinema.audio.ctx.resume();
+  clearTimeout(cinema.titleTimer);
+  $("#hiddenSignal").classList.add("hidden");
   const raw = localStorage.getItem(SAVE_KEY);
   if(!raw) return;
   try{
@@ -363,6 +720,7 @@ function loadGame(){
     state.unlocked = Array.isArray(d.unlocked)?d.unlocked:[];
     state.cleared = !!d.cleared || localStorage.getItem(CLEAR_KEY)==="1";
     state.ending = d.ending || null;
+    $("#skipBtn").classList.toggle("hidden", !state.cleared);
     $("#topbar").classList.remove("hidden");
     $("#footerHint").classList.remove("hidden");
     setScreen("#gameScreen");
@@ -399,10 +757,13 @@ function toTitle(){
   $("#topbar").classList.add("hidden");
   $("#footerHint").classList.add("hidden");
   setScreen("#titleScreen");
+  setFxMode("title");
+  $("#titleScreen").classList.toggle("cleared-title", localStorage.getItem(CLEAR_KEY)==="1");
   $("#continueBtn").disabled = !localStorage.getItem(SAVE_KEY);
   if(localStorage.getItem(CLEAR_KEY)==="1"){
     $("#recordNemoBtn").classList.remove("hidden");
   }
+  scheduleTitleSecret();
 }
 
 $("#newGameBtn").onclick = startNew;
@@ -421,6 +782,24 @@ $("#returnTitleBtn").onclick = toTitle;
 $("#endingTitleBtn").onclick = toTitle;
 $("#recordNemoBtn").onclick = ()=>{ renderRecordNemo(); setScreen("#recordScreen"); };
 $("#closeRecordBtn").onclick = toTitle;
+
+$("#soundBtn").onclick = ()=>{
+  initAudio();
+  if(cinema.audioReady && cinema.audio.ctx.state==="suspended") cinema.audio.ctx.resume();
+  setSound(!cinema.sound);
+};
+
+$("#skipBtn").onclick = ()=>{
+  cinema.skip=!cinema.skip;
+  $("#skipBtn").textContent=`SKIP: ${cinema.skip ? "ON":"OFF"}`;
+  if(cinema.skip){
+    cinema.holdUntil=0;
+    $("#nextBtn").classList.remove("waiting");
+  }
+};
+
+resizeFx();
+requestAnimationFrame(drawFx);
 
 document.addEventListener("keydown",(e)=>{
   if((e.key==="Enter" || e.key===" ") && $("#gameScreen").classList.contains("active")){
