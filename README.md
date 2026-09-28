@@ -146,3 +146,15 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
 - `OBSERVATORY LOG / ASTROPHYSICAL TERMINAL / WORLD LIFE EXPECTANCY / CLASSIFIED` の各シーンで表示
 - スマホ向け切り出し画像 `world-decay-photo-mobile.png` を追加
 - 画面幅が狭い時はスマホ向け画像を自動表示
+
+
+## v0.3.5 Many Worlds Illustration Update
+- `RECORD 028 / MANY WORLDS` に平行世界ビジュアル `many-worlds-photo.png` を追加
+- `DEEP OBSERVATION / ANOMALY`
+- `PARALLEL SIGNATURES DETECTED`
+- `WORLD BRANCH MAP / PARTIAL`
+- `DESTINATION COUNT / UNDEFINED`
+- `RESEARCH NOTE`
+  の各シーンで表示
+- スマホ向け切り出し画像 `many-worlds-photo-mobile.png` を追加
+- 画面幅が狭い時はスマホ向け画像を自動表示
