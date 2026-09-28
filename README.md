@@ -119,3 +119,9 @@ v0.2では設定の根幹を改稿し、PROJECT N.E.M.O.を
 ### セーブ
 v0.3はv0.2系と別のlocalStorageキーを使用。
 過去版のセーブには干渉しません。
+
+
+## v0.3.1 Clear-state Foreshadowing Update
+- クリア後、RECORD 000 の表示タイトルを `UNKNOWN FILE` から `ORIGIN RECORD` に変更
+- ARCHIVE内の `REC-000` タイトルもクリア後は `ORIGIN RECORD` 表示に変更
+- 物語クリア後に、原記録だったことがUI上でも回収される演出を追加

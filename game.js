@@ -508,7 +508,11 @@ async function renderScene(){
 
   $("#chapterLabel").textContent = s.rec;
   $("#recordStatus").textContent = s.rec;
-  $("#sceneTitle").textContent = s.title;
+  const clearedForDisplay = localStorage.getItem(CLEAR_KEY)==="1";
+  const displayTitle = (clearedForDisplay && s.rec==="RECORD 000" && s.title==="UNKNOWN FILE")
+    ? "ORIGIN RECORD"
+    : s.title;
+  $("#sceneTitle").textContent = displayTitle;
   $("#visualIcon").textContent = s.icon;
   $("#visualText").textContent = s.visual;
   $("#speaker").textContent = s.speaker || "";
@@ -731,13 +735,15 @@ function loadGame(){
 function renderArchive(){
   syncUnlocks();
   $("#archiveList").innerHTML = "";
+  const clearedForArchive = localStorage.getItem(CLEAR_KEY)==="1";
   archives.forEach(a=>{
     const unlocked = state.unlocked.includes(a.id);
     const el = document.createElement("div");
     el.className = "archive-item" + (unlocked ? "" : " locked");
+    const archiveTitle = (clearedForArchive && a.id==="REC-000") ? "ORIGIN RECORD" : a.title;
     el.innerHTML = `
       <div class="archive-id">${unlocked ? a.id : "LOCKED"}</div>
-      <div class="archive-title">${unlocked ? a.title : "████████"}</div>
+      <div class="archive-title">${unlocked ? archiveTitle : "████████"}</div>
       <div class="archive-body">${unlocked ? a.body : "記録はまだ復元されていません。"}</div>`;
     $("#archiveList").appendChild(el);
   });
