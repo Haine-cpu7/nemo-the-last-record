@@ -158,3 +158,12 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
   の各シーンで表示
 - スマホ向け切り出し画像 `many-worlds-photo-mobile.png` を追加
 - 画面幅が狭い時はスマホ向け画像を自動表示
+
+
+## v0.3.6 Last Days Illustration Update
+- `RECORD 040 / LAST DAYS` に「おやつは？」場面の専用ビジュアル `last-days-photo.png` を追加
+- `COUNTDOWN / 3 DAYS`
+- `PRIVATE PHOTO`
+  の2シーンで表示
+- スマホ向け切り出し画像 `last-days-photo-mobile.png` を追加
+- 画面幅が狭い時はスマホ向け画像を自動表示

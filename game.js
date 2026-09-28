@@ -395,9 +395,9 @@ const scenes = [
   {rec:"RECORD 031", title:"PROJECT N.E.M.O.", icon:"○", visual:"PRIVATE NOTE",
    speaker:"王", text:"王女だから残すのではない。\n\n生きてほしいから、未来を残す。"},
 
-  {rec:"RECORD 040", title:"LAST DAYS", icon:"⌛", visual:"COUNTDOWN / 3 DAYS",
+  {rec:"RECORD 040", title:"LAST DAYS", icon:"⌛", visual:"COUNTDOWN / 3 DAYS", image:"last-days-photo.png", mobileImage:"last-days-photo-mobile.png",
    speaker:"侍女の日誌", text:"殿下は何も知らない。\n\n今日も『おやつは？』と聞かれた。"},
-  {rec:"RECORD 040", title:"LAST DAYS", icon:"○", visual:"PRIVATE PHOTO",
+  {rec:"RECORD 040", title:"LAST DAYS", icon:"○", visual:"PRIVATE PHOTO", image:"last-days-photo.png", mobileImage:"last-days-photo-mobile.png",
    speaker:"侍女の日誌", text:"残り三日。\n\n私は笑って、いつも通りの菓子を差し出した。"},
 
   {rec:"RECORD 047", title:"MEMORY COST", icon:"!", visual:"TRANSFER RISK REPORT",
