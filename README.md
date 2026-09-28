@@ -183,3 +183,15 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
 - `RECORD 040 / LAST DAYS` のおやつシーン画像を、手の自然さを修正した新版イラストに差し替え
 - `last-days-photo.png` を更新
 - `last-days-photo-mobile.png` も新版から再切り出し
+
+
+## v0.3.9 Mobile Black-Bar Fix
+- スマホ用画像の切り出し処理を修正
+- `royal-garden-photo-mobile.png`
+- `world-decay-photo-mobile.png`
+- `many-worlds-photo-mobile.png`
+- `last-days-photo-mobile.png`
+- `world-0001-photo-mobile.png`
+  をすべて安全な縦切りで再生成
+- スマホ表示時の画像エリアも微調整
+- 画像上部が黒く見える不具合を修正
