@@ -354,13 +354,13 @@ const scenes = [
   {rec:"RECORD 009", title:"GARDEN", icon:"○", visual:"ANNOTATION", image:"royal-garden-photo.png", mobileImage:"royal-garden-photo-mobile.png",
    speaker:"侍女の日誌", text:"王女らしくない、と侍従長は嘆いていた。\n\nけれど私は、あの方が笑っているなら、それでよいと思う。"},
 
-  {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"OBSERVATORY LOG",
+  {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"OBSERVATORY LOG", image:"world-decay-photo.png", mobileImage:"world-decay-photo-mobile.png",
    speaker:"SYSTEM", text:"新規記録断片を復元しました。\n\nREC-014 / WORLD DECAY"},
-  {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"ASTROPHYSICAL TERMINAL",
+  {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"ASTROPHYSICAL TERMINAL", image:"world-decay-photo.png", mobileImage:"world-decay-photo-mobile.png",
    speaker:"主任観測官", text:"終端現象は確定した。\n\n原因は外敵でも、兵器でも、天災でもない。"},
-  {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"WORLD LIFE EXPECTANCY",
+  {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"WORLD LIFE EXPECTANCY", image:"world-decay-photo.png", mobileImage:"world-decay-photo-mobile.png",
    speaker:"主任観測官", text:"この世界そのものが、寿命を迎える。"},
-  {rec:"RECORD 014", title:"WORLD DECAY", icon:"…", visual:"CLASSIFIED",
+  {rec:"RECORD 014", title:"WORLD DECAY", icon:"…", visual:"CLASSIFIED", image:"world-decay-photo.png", mobileImage:"world-decay-photo-mobile.png",
    speaker:"記録官", text:"王家はこの事実を三百年以上秘匿してきた。\n\n民に知らせれば秩序は崩壊する。\n知らせなくても、WORLD-0000はいずれ消滅する。"},
 
   {rec:"RECORD 028", title:"MANY WORLDS", icon:"∞", visual:"DEEP OBSERVATION / ANOMALY",

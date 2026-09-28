@@ -139,3 +139,10 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
 - `RECORD 009 / GARDEN` 用にスマホ表示向けの切り出し画像 `royal-garden-photo-mobile.png` を追加
 - 画面幅が狭い時はスマホ用画像を自動表示
 - スマホ時の画像キャプションサイズも微調整
+
+
+## v0.3.4 World Decay Illustration Update
+- `RECORD 014 / WORLD DECAY` に終末現象ビジュアル `world-decay-photo.png` を追加
+- `OBSERVATORY LOG / ASTROPHYSICAL TERMINAL / WORLD LIFE EXPECTANCY / CLASSIFIED` の各シーンで表示
+- スマホ向け切り出し画像 `world-decay-photo-mobile.png` を追加
+- 画面幅が狭い時はスマホ向け画像を自動表示
