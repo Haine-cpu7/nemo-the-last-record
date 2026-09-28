@@ -167,3 +167,13 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
   の2シーンで表示
 - スマホ向け切り出し画像 `last-days-photo-mobile.png` を追加
 - 画面幅が狭い時はスマホ向け画像を自動表示
+
+
+## v0.3.7 Transferred World Illustration Update
+- `RECORD 18472 / WORLD-0001` に転送後のねも専用ビジュアル `world-0001-photo.png` を追加
+- `CURRENT WORLD / STREET`
+- `DISTANT OBSERVATION`
+- `RECORDER TERMINAL`
+  の各シーンで表示
+- スマホ向け切り出し画像 `world-0001-photo-mobile.png` を追加
+- 画面幅が狭い時はスマホ向け画像を自動表示
