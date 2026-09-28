@@ -421,9 +421,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 /* v0.3.9 mobile image framing fix */
 @media(max-width:640px){
   .visual.has-image{
-    min-height:340px;
-    background-position:62% top;
-    background-size:90% auto;
+    min-height:300px;
+    background-position:60% top;
+    background-size:86% auto;
     background-repeat:no-repeat;
     background-color:#0c1117;
   }
