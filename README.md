@@ -132,3 +132,10 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
 - `PRIVATE PHOTO / ROYAL GARDEN` と `ANNOTATION` の両シーンで画像表示
 - ビジュアル枠に画像をきれいに収めるための scene image 表示スタイルを追加
 - テキストUIになじむよう、下部に控えめなキャプション表示へ調整
+
+
+## v0.3.3 Mobile Scene Image / Typo Fix
+- エンディング内の誤字 `ねま` を `ねも` に修正
+- `RECORD 009 / GARDEN` 用にスマホ表示向けの切り出し画像 `royal-garden-photo-mobile.png` を追加
+- 画面幅が狭い時はスマホ用画像を自動表示
+- スマホ時の画像キャプションサイズも微調整
