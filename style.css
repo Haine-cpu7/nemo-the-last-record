@@ -420,8 +420,9 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 @media(max-width:640px){
   .visual.has-image{
     min-height:420px;
-    background-position:center top;
-    background-size:contain;
+    background-position:62% top;
+    background-size:90% auto;
+    background-repeat:no-repeat;
     background-color:#0c1117;
   }
 }
