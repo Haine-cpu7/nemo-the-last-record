@@ -81,3 +81,10 @@ v0.2では設定の根幹を改稿し、PROJECT N.E.M.O.を
 
 ## v0.2.2 Text Fix
 - 王の台詞を「そこへ、わが子を送れるのか。」に修正
+
+
+## v0.2.3 Title / OGP Update
+- タイトル画面の背景にキービジュアル `title-hero.png` を追加
+- OGP用画像 `ogp.png` を追加（1200x630）
+- Open Graph / Twitter Card メタタグを追加
+- URL共有時にプレビュー画像が出るよう調整
