@@ -177,3 +177,9 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
   の各シーンで表示
 - スマホ向け切り出し画像 `world-0001-photo-mobile.png` を追加
 - 画面幅が狭い時はスマホ向け画像を自動表示
+
+
+## v0.3.8 Last Days Image Replacement
+- `RECORD 040 / LAST DAYS` のおやつシーン画像を、手の自然さを修正した新版イラストに差し替え
+- `last-days-photo.png` を更新
+- `last-days-photo-mobile.png` も新版から再切り出し
