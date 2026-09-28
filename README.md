@@ -125,3 +125,10 @@ v0.3はv0.2系と別のlocalStorageキーを使用。
 - クリア後、RECORD 000 の表示タイトルを `UNKNOWN FILE` から `ORIGIN RECORD` に変更
 - ARCHIVE内の `REC-000` タイトルもクリア後は `ORIGIN RECORD` 表示に変更
 - 物語クリア後に、原記録だったことがUI上でも回収される演出を追加
+
+
+## v0.3.2 Royal Garden Photo Update
+- `RECORD 009 / GARDEN` に専用ビジュアル `royal-garden-photo.png` を追加
+- `PRIVATE PHOTO / ROYAL GARDEN` と `ANNOTATION` の両シーンで画像表示
+- ビジュアル枠に画像をきれいに収めるための scene image 表示スタイルを追加
+- テキストUIになじむよう、下部に控えめなキャプション表示へ調整

@@ -349,9 +349,9 @@ const scenes = [
   {rec:"RECORD 001", title:"BIRTH", icon:"N", visual:"SUBJECT NAME RECOVERED",
    speaker:"SYSTEM", text:"NEMO"},
 
-  {rec:"RECORD 009", title:"GARDEN", icon:"♨", visual:"PRIVATE PHOTO / ROYAL GARDEN",
+  {rec:"RECORD 009", title:"GARDEN", icon:"♨", visual:"PRIVATE PHOTO / ROYAL GARDEN", image:"royal-garden-photo.png",
    speaker:"侍女の日誌", text:"殿下は本日も庭園へ抜け出された。\n\n厨房から蒸し菓子を一つ持ち出し、池の横で召し上がっていた。"},
-  {rec:"RECORD 009", title:"GARDEN", icon:"○", visual:"ANNOTATION",
+  {rec:"RECORD 009", title:"GARDEN", icon:"○", visual:"ANNOTATION", image:"royal-garden-photo.png",
    speaker:"侍女の日誌", text:"王女らしくない、と侍従長は嘆いていた。\n\nけれど私は、あの方が笑っているなら、それでよいと思う。"},
 
   {rec:"RECORD 014", title:"WORLD DECAY", icon:"△", visual:"OBSERVATORY LOG",
@@ -515,6 +515,14 @@ async function renderScene(){
   $("#sceneTitle").textContent = displayTitle;
   $("#visualIcon").textContent = s.icon;
   $("#visualText").textContent = s.visual;
+  const visualEl = $("#visual");
+  if(s.image){
+    visualEl.classList.add("has-image");
+    visualEl.style.backgroundImage = `url("${s.image}")`;
+  }else{
+    visualEl.classList.remove("has-image");
+    visualEl.style.backgroundImage = "";
+  }
   $("#speaker").textContent = s.speaker || "";
   $("#choices").innerHTML = "";
   $("#nextBtn").classList.remove("hidden","waiting");
