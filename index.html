@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
+  <title>NEMO : THE LAST RECORD</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <div class="noise"></div>
+
+    <header id="topbar" class="hidden">
+      <button id="archiveBtn" class="ghost">ARCHIVE</button>
+      <div id="recordStatus">RECORD 000</div>
+      <button id="menuBtn" class="ghost">MENU</button>
+    </header>
+
+    <main>
+      <section id="titleScreen" class="screen active">
+        <div class="title-wrap">
+          <div class="eyebrow">NEMO ARCHIVE SYSTEM</div>
+          <h1>NEMO<br><span>THE LAST RECORD</span></h1>
+          <p class="subtitle">――ねもが生まれた日、世界は終わった。</p>
+          <div class="menu">
+            <button id="newGameBtn" class="main-btn">NEW GAME</button>
+            <button id="continueBtn" class="main-btn" disabled>CONTINUE</button>
+            <button id="recordNemoBtn" class="main-btn secret hidden">RECORD NEMO</button>
+          </div>
+          <p class="small">v0.2 / PARALLEL WORLD EDITION<br>A record reconstruction visual novel.</p>
+        </div>
+      </section>
+
+      <section id="gameScreen" class="screen">
+        <div class="terminal">
+          <div id="chapterLabel" class="chapter-label">RECORD 000</div>
+          <div id="sceneTitle" class="scene-title">UNKNOWN FILE</div>
+          <div id="visual" class="visual">
+            <div id="visualIcon" class="visual-icon">◌</div>
+            <div id="visualText" class="visual-text">NO IMAGE DATA</div>
+          </div>
+
+          <div id="dialogueBox" class="dialogue-box">
+            <div id="speaker" class="speaker"></div>
+            <div id="text" class="text"></div>
+            <div id="choices" class="choices"></div>
+            <button id="nextBtn" class="next-btn">NEXT</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="archiveScreen" class="screen overlay-screen">
+        <div class="panel wide">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">RECOVERED FILES</div>
+              <h2>ARCHIVE</h2>
+            </div>
+            <button id="closeArchiveBtn" class="ghost">CLOSE</button>
+          </div>
+          <div id="archiveList" class="archive-list"></div>
+        </div>
+      </section>
+
+      <section id="recordScreen" class="screen overlay-screen">
+        <div class="panel wide">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">POST-CLEAR INDEX</div>
+              <h2>RECORD NEMO</h2>
+            </div>
+            <button id="closeRecordBtn" class="ghost">CLOSE</button>
+          </div>
+          <div class="record-message">
+            <p>これは、王女の記録ではない。</p>
+            <p>ねもが、この世界で生きた記録だ。</p>
+          </div>
+          <div id="recordList" class="archive-list"></div>
+        </div>
+      </section>
+
+      <section id="menuScreen" class="screen overlay-screen">
+        <div class="panel">
+          <div class="eyebrow">SYSTEM</div>
+          <h2>MENU</h2>
+          <button id="saveBtn" class="main-btn">SAVE</button>
+          <button id="returnTitleBtn" class="main-btn">TITLE</button>
+          <button id="closeMenuBtn" class="main-btn">RETURN</button>
+        </div>
+      </section>
+
+      <section id="endingScreen" class="screen">
+        <div class="ending-wrap">
+          <div class="eyebrow">FINAL RECORD</div>
+          <h2 id="endingTitle">END</h2>
+          <div id="endingText" class="ending-text"></div>
+          <button id="endingTitleBtn" class="main-btn">TITLE</button>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footerHint" class="hidden">Tap NEXT / 画面を進めて記録を復元してください</footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
