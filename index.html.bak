@@ -29,7 +29,6 @@
     <canvas id="fxCanvas" aria-hidden="true"></canvas>
     <div class="noise"></div>
     <div id="blackout" class="blackout" aria-hidden="true"></div>
-    <div id="returnVisual" class="return-visual hidden" aria-hidden="true"><div class="return-visual-inner"></div></div>
     <div id="recoveryOverlay" class="recovery-overlay hidden" aria-hidden="true">
       <div class="recovery-card">
         <div id="recoveryRec" class="recovery-rec">REC-000</div>

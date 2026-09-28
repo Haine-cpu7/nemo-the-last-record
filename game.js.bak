@@ -20,8 +20,7 @@ const cinema = {
   fxMode: "idle",
   lastRec: null,
   holdUntil: 0,
-  sceneToken: 0,
-  returningToTitle: false
+  sceneToken: 0
 };
 
 const IMPORTANT_HOLDS = {
@@ -489,9 +488,6 @@ let fullText = "";
 function setScreen(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   $(id).classList.add("active");
-  window.scrollTo(0,0);
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
 }
 
 function syncUnlocks(){
@@ -772,12 +768,9 @@ function renderRecordNemo(){
   });
 }
 
-function openTitleScreen(){
+function toTitle(){
   $("#topbar").classList.add("hidden");
   $("#footerHint").classList.add("hidden");
-  $("#returnVisual").classList.remove("show");
-  $("#returnVisual").classList.add("hidden");
-  $("#blackout").classList.remove("active","flash");
   setScreen("#titleScreen");
   setFxMode("title");
   $("#titleScreen").classList.toggle("cleared-title", localStorage.getItem(CLEAR_KEY)==="1");
@@ -786,43 +779,6 @@ function openTitleScreen(){
     $("#recordNemoBtn").classList.remove("hidden");
   }
   scheduleTitleSecret();
-}
-
-function toTitle(){
-  openTitleScreen();
-}
-
-async function endingReturnToTitle(){
-  if(cinema.returningToTitle) return;
-  cinema.returningToTitle = true;
-
-  const titleBtn = $("#endingTitleBtn");
-  const blackout = $("#blackout");
-  const returnVisual = $("#returnVisual");
-
-  titleBtn.disabled = true;
-  clearTimeout(cinema.titleTimer);
-  window.scrollTo(0,0);
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
-
-  blackout.classList.add("active");
-  await delay(420);
-
-  returnVisual.classList.remove("hidden");
-  requestAnimationFrame(()=>returnVisual.classList.add("show"));
-  await delay(2000);
-
-  returnVisual.classList.remove("show");
-  await delay(700);
-  returnVisual.classList.add("hidden");
-
-  openTitleScreen();
-  await delay(60);
-  blackout.classList.remove("active");
-
-  titleBtn.disabled = false;
-  cinema.returningToTitle = false;
 }
 
 $("#newGameBtn").onclick = startNew;
@@ -838,7 +794,7 @@ $("#saveBtn").onclick = ()=>{
   setTimeout(()=>$("#saveBtn").textContent="SAVE",700);
 };
 $("#returnTitleBtn").onclick = toTitle;
-$("#endingTitleBtn").onclick = endingReturnToTitle;
+$("#endingTitleBtn").onclick = toTitle;
 $("#recordNemoBtn").onclick = ()=>{ renderRecordNemo(); setScreen("#recordScreen"); };
 $("#closeRecordBtn").onclick = toTitle;
 
